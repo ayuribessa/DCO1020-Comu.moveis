@@ -8,31 +8,33 @@ RAIO = 5e3
 XGRID = 5*RAIO
 YGRID = 6*np.sqrt(3/4)*RAIO
 OFFSET = np.pi/6
+HBSS = 30
+PTDBM = 57
+HMOB = 5
+FC = 800
+AHM = 3.2*(math.log10(11.75*HMOB))**2 - 4.97
 
 def main():
 
-
-    #centro = float(input("digite o centro da do hexagono: "))   (Caso queira pedir um centro qualquer)
-    #RAIO = float(input("Digite o RAIO do hexagono: "))          (Caso queria usar um centro qualquer)
-    #makeHex(centro,RAIO)
-    #distEntreSites= 2*np.sqrt(3/4)*RAIO
-    #Definindo constantes:
-   
     #Chamando a função que calcula os centros dos hexagonos
-    centros = calcCentros(RAIO,OFFSET,XGRID,YGRID)
+    centros = calcCentros(XGRID,YGRID)
     #Chamando função que plota os 7 hexagonos num grid
-    MakeGrid(RAIO,centros)
+    MakeGrid(centros)
+    plt.scatter(np.real(centros),np.imag(centros))
     #Mostrando o plot
     plt.show()
 
     #Criando o grid de pontos de medição para cada Bs
-    posEachBs = calcPontosMedicao(RAIO,XGRID,YGRID,centros)
+    xx,yy,posEachBs = calcPontosMedicao(XGRID,YGRID,centros)
+    plt.scatter(np.real(centros),np.imag(centros))
      
     #Mostrando os pontos de medição em cima do grid para as 7 Erbs
     printPontosMedicao(posEachBs,centros)
+    mtPotEachBsdBm = calcMatrizPotenciasBsdbm(posEachBs)
+    printREMs(xx,yy,mtPotEachBsdBm,centros)
 
 
-def calcPontosMedicao(RAIO,XGRID,YGRID,centros):
+def calcPontosMedicao(XGRID,YGRID,centros):
     passo = math.ceil(RAIO/10)
     XGRID += (XGRID % passo)
     YGRID += (YGRID % passo)
@@ -42,54 +44,64 @@ def calcPontosMedicao(RAIO,XGRID,YGRID,centros):
         posBs = (xx + yy*1j) - centros[i]
         posEachBs.append(posBs)
     posEachBs = np.array(posEachBs)
-    return posEachBs
+    return xx,yy,posEachBs
+
+def calcMatrizPotenciasBsdbm(posEachBs):
+    mtDisEachBsNorm = np.abs(posEachBs)
+    np.where(mtDisEachBsNorm < RAIO, RAIO, mtDisEachBsNorm)
+    mtPldb = 69.55+26.6*math.log10(FC)+(44.9-6.55*math.log10(HBSS))*np.log10(mtDisEachBsNorm/1e3) - 13.82*math.log10(HBSS) - AHM
+    mtPotEachBsdBm = PTDBM - mtPldb
+    return mtPotEachBsdBm
+
+def printREMs(xx,yy,mtPotEachBsdBm,centros):
+    for i in range(7):
+        plt.pcolor(xx,yy, mtPotEachBsdBm[i],vmax = -115, vmin = -50)
+        plt.colorbar()
+        MakeGrid(centros) 
+        plt.title('ERB {}'.format(i+1) )
+        plt.autoscale()
+        plt.show()
 
 def printPontosMedicao(posEachBs,centros):
     for i in range(7):
         plt.scatter(posEachBs[i].real, posEachBs[i].imag)
         plt.title('ERB {}'.format(i+1))
-        MakeGrid(RAIO, centros - centros[i])
+        MakeGrid(centros - centros[i])
+        plt.autoscale()
         plt.show()
 
 
-def makeHex(centro,RAIO):
+def makeHex(centro):
     PontosHex = []
     for i in range(7):
-        #calcula um número complexo é o vértice do hexágono
         ponto = RAIO*np.exp(np.pi/3*(i-1)*1j)
-        #ponto = RAIO*(np.cos((i-1)*np.pi/3) + np.sin((i-1)*np.pi/3)*1j)
-        #Povoa a lista com esses pontos
         PontosHex.append(ponto)
 
-    #Escalona os pontos pelo valor do centro( ajuste )
-    #pontosHex = [x + centro for x in pontosHex]
-    #X = [x.real for x in pontosHex]
-    #Y = [y.imag for y in pontosHex]
     pontosHex = np.asarray(PontosHex)
     pontosHex += centro
     X = np.real(pontosHex)
     Y = np.imag(pontosHex)
     plt.plot(X,Y)
-    #plota o centro também
-    plt.scatter(centro.real,centro.imag, marker="s")
+    #plt.scatter(centro.real,centro.imag, marker="s")
     #plt.show()
 
-def calcCentros(RAIO, OFFSET,XGRID,YGRID):
-    Centros = [0] #primeiro elemento como zero para não precisar somar o centro do hexagono do meio posteriormente
+def calcCentros(XGRID,YGRID):
+    Centros = [0] 
     for a in range(6):
         centro = RAIO*np.sqrt(3)*np.exp(((a-2)*np.pi/3 + OFFSET)*1j)
         Centros.append(centro)
     
-    #centros = [x + complex(XGRID/2,YGRID/2) for x in centros]
-    #print(centros)
+
     centros = np.asarray(Centros)
     centros += complex(XGRID/2,YGRID/2)
     return centros
 
 #Função para desenhar o grid de hexagonos
-def MakeGrid(RAIO,centros):
+def MakeGrid(centros):
     for point in centros:
-        makeHex(point,RAIO)
+        makeHex(point)
+    
+    
     
 main()
 
