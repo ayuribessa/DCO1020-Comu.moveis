@@ -12,24 +12,12 @@ PASSO = 7
 XGRID0RI = 5*RAIO
 YGRID0RI = 6*np.sqrt(3/4)*RAIO
 OFFSET = np.pi/6
-HBSS = 30
-PTDBM = 57
-HMOB = 5
-FC = 800
-AHM = 3.2*(math.log10(11.75*HMOB))**2 - 4.97
 SIGMA_SHADOW = 8
 
 dimX = math.ceil(XGRID0RI + (XGRID0RI % PASSO))
 dimY = math.ceil(YGRID0RI + (YGRID0RI % PASSO))
 mtPosX, mtPosY = np.meshgrid(np.arange(0,dimX + PASSO ,PASSO), np.arange(0,dimY + PASSO,PASSO) )
 mtPontosMedicao = mtPosX + mtPosY*1j
-
-# dShadPoint = mtPontosMedicao[11,11]
-#faltou testar esses outros :
-# dShadPoint = mtPontosMedicao[0,0]
-# dShadPoint = mtPontosMedicao[0,np.shape(mtPontosMedicao)[1] - 1]
-# dShadPoint = mtPontosMedicao[len(mtPosX) - 1,0]
-# dShadPoint = mtPontosMedicao[endx - 1, endy -1]
 
 dimXS = math.ceil(XGRID0RI + (XGRID0RI % SHAD))
 dimYS = math.ceil(YGRID0RI + (YGRID0RI % SHAD))
@@ -38,10 +26,10 @@ mtPosShad = mtPosxShad + mtPosyShad*1j
 
 mtShadowingSamples = SIGMA_SHADOW*np.random.randn(np.shape(mtPosyShad)[0],np.shape(mtPosyShad)[1])
 sizeL, sizeC = np.shape(mtPontosMedicao) #pt4
-
 mtShadowingCorr = np.empty([sizeL,sizeC])
-for linha in range(sizeL -1): #pt4
-    for coluna in range(sizeC - 1): #pt4
+
+for linha in range(sizeL): #pt4
+    for coluna in range(sizeC): #pt4
         dShadPoint = mtPontosMedicao[linha,coluna] #pt4
 
         dxIndexP1 = np.real(dShadPoint)/SHAD
@@ -58,7 +46,7 @@ for linha in range(sizeL -1): #pt4
             # print("O ponto é um ponto de grade")
             # Amostra de sombreamento
             # shadowingC = mtShadowingSamples[dyIndexP1 - 1][dxIndexP1 - 1] #pt3
-            mtShadowingCorr[linha -1][coluna -1] = mtShadowingSamples[dyIndexP1-1][dxIndexP1-1] #pt4
+            mtShadowingCorr[linha ][coluna ] = mtShadowingSamples[dyIndexP1][dxIndexP1] #pt4
 
         else:
             dxIndexP1 = math.floor(dxIndexP1) + 1
@@ -73,7 +61,7 @@ for linha in range(sizeL -1): #pt4
                 dyIndexP3 = dyIndexP1-1        
     
             # elif dyIndexP1 == mtPosyShad[0][0]:
-            elif dyIndexP1 == np.shape(mtPosyShad)[1]:
+            elif dyIndexP1 == np.shape(mtPosyShad)[0]:
                 dxIndexP2 = dxIndexP1+1
                 dyIndexP2 = dyIndexP1
                 dxIndexP4 = dxIndexP1+1
@@ -82,7 +70,7 @@ for linha in range(sizeL -1): #pt4
                 dyIndexP3 = dyIndexP1-1
 
             # elif dxIndexP1 == mtPosyShad[1][0]:
-            elif dxIndexP1 == np.shape(mtPosyShad)[0]:
+            elif dxIndexP1 == np.shape(mtPosyShad)[1]:
                 dxIndexP2 = dxIndexP1-1
                 dyIndexP2 = dyIndexP1
                 dxIndexP4 = dxIndexP1-1
@@ -120,12 +108,12 @@ for linha in range(sizeL -1): #pt4
             #ajuste do desvio padrão devido a regressão linear
             stdNormalFactor = np.sqrt( (1 - 2*distY + 2*(distY**2))*(1 - 2*distX + 2*(distX**2))) #pt3
             #amostras do sombreamento para os 4 pontos de gradedXIndexP1);
-            Sample1 = mtShadowingSamples[dyIndexP1 - 1,dxIndexP1 - 1] #pt3
-            Sample2 = mtShadowingSamples[dyIndexP2 - 1,dxIndexP2 - 1] #pt3
-            Sample3 = mtShadowingSamples[dyIndexP3 - 1,dxIndexP3 - 1] #pt3
-            Sample4 = mtShadowingSamples[dyIndexP4 - 1,dxIndexP4 - 1] #pt3
+            Sample1 = mtShadowingSamples[dyIndexP1 -1 ,dxIndexP1 -1 ] #pt3
+            Sample2 = mtShadowingSamples[dyIndexP2 -1 ,dxIndexP2 -1] #pt3
+            Sample3 = mtShadowingSamples[dyIndexP3 -1,dxIndexP3 -1] #pt3
+            Sample4 = mtShadowingSamples[dyIndexP4 -1 ,dxIndexP4 -1] #pt3
 
-            mtShadowingCorr[linha -1][coluna -1] = ((1-distY)*(Sample1*(1-distX) + Sample2*distX) +  #pt4 #pt4
+            mtShadowingCorr[linha ][coluna ] = ((1-distY)*(Sample1*(1-distX) + Sample2*distX) +  #pt4 #pt4
                            distY*(Sample3*(1 - distX) + Sample4*distX))/stdNormalFactor #pt4 #pt4
 fig = plt.figure() #pt4
 ax =  fig.add_subplot(111,projection='3d') #pt4

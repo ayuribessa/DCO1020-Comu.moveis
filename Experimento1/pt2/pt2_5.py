@@ -27,6 +27,7 @@ dimY = math.ceil(YGRID0RI + (YGRID0RI % PASSO))
 mtPosX, mtPosY = np.meshgrid(np.arange(0,dimX + PASSO ,PASSO), np.arange(0,dimY + PASSO,PASSO) )
 mtPontosMedicao = mtPosX + mtPosY*1j
 
+# fCorrShadowing(mtPontosMedicao)
 # dShadPoint = mtPontosMedicao[11,11]
 #faltou testar esses outros :
 # dShadPoint = mtPontosMedicao[0,0]
@@ -146,12 +147,14 @@ def fCorrShadowing(mtPontosMedicao):
                                 distY*(Sample3*(1 - distX) + Sample4*distX))/stdNormalFactor #pot4 #pt4
                     mtShadowingCorr[i][linha -1][coluna -1] = np.sqrt(ALPHA_CORR)*shadowingC + np.sqrt(1-ALPHA_CORR)*mtShadowingERB
 
-#     return mtShadowingCorr
+    return mtShadowingCorr
+
+
 #     # fig = plt.figure() #pt4
 #     # ax =  fig.add_subplot(111,projection='3d') #pt4
 #     # ax.plot_surface(mtPosX,mtPosY,mtShadowingCorr, cmap = 'hsv') #pt4
 #     # plt.show() #pt4
 
 
-# oi = fCorrShadowing(mtPontosMedicao)
+oi = fCorrShadowing(mtPontosMedicao)
 # print(np.shape(oi))

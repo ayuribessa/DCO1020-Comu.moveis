@@ -19,7 +19,7 @@ SIGMA_SHADOW = 8
 
 dimX = math.ceil(XGRID0RI + (XGRID0RI % PASSO))
 dimY = math.ceil(YGRID0RI + (YGRID0RI % PASSO))
-mtPosX, mtPosY = np.meshgrid(np.arange(0,dimX + PASSO ,PASSO), np.arange(0,dimY + PASSO,PASSO) )
+mtPosX, mtPosY = np.meshgrid(np.arange(0,dimX  ,PASSO), np.arange(0,dimY ,PASSO) )
 mtPontosMedicao = mtPosX + mtPosY*1j
 
 dShadPoint = mtPontosMedicao[11,11]
@@ -31,7 +31,7 @@ dShadPoint = mtPontosMedicao[11,11]
 
 dimXS = math.ceil(XGRID0RI + (XGRID0RI % SHAD))
 dimYS = math.ceil(YGRID0RI + (YGRID0RI % SHAD))
-mtPosxShad, mtPosyShad = np.meshgrid(np.arange(0,dimXS + SHAD,SHAD), np.arange(0,dimYS + SHAD,SHAD))
+mtPosxShad, mtPosyShad = np.meshgrid(np.arange(0,dimXS ,SHAD), np.arange(0,dimYS ,SHAD))
 mtPosShad = mtPosxShad + mtPosyShad*1j
 
 mtShadowingSamples = SIGMA_SHADOW*np.random.randn(np.shape(mtPosyShad)[0],np.shape(mtPosyShad)[1])
@@ -64,7 +64,7 @@ else:
         dyIndexP3 = dyIndexP1-1        
     
     # elif dyIndexP1 == mtPosyShad[0][0]:
-    elif dyIndexP1 == np.shape(mtPosyShad)[1]:
+    elif dyIndexP1 == np.shape(mtPosyShad)[0]:
         dxIndexP2 = dxIndexP1+1
         dyIndexP2 = dyIndexP1
         dxIndexP4 = dxIndexP1+1
@@ -73,7 +73,7 @@ else:
         dyIndexP3 = dyIndexP1-1
 
     # elif dxIndexP1 == mtPosyShad[1][0]:
-    elif dxIndexP1 == np.shape(mtPosyShad)[0]:
+    elif dxIndexP1 == np.shape(mtPosyShad)[1]:
         dxIndexP2 = dxIndexP1-1
         dyIndexP2 = dyIndexP1
         dxIndexP4 = dxIndexP1-1
@@ -91,15 +91,18 @@ else:
 
     
     plt.plot(np.imag(mtPosShad),np.real(mtPosShad),'k.',fillstyle = 'none')
+    
     plt.plot(np.imag(dShadPoint),np.real(dShadPoint),'sr')
+
     mt4points = np.array([ mtPosShad[dyIndexP1-1, dxIndexP1-1], mtPosShad[dyIndexP2-1, dxIndexP2-1],
                   mtPosShad[dyIndexP3-1, dxIndexP3-1], mtPosShad[dyIndexP4-1, dxIndexP4-1]])
 
     plt.plot((mt4points.imag),(mt4points.real),'b*')
+
+    # plt.plot(np.real(mtPosX), np.imag(mtPosY),'sk')
     #Customizando eixos para dar zoom no ponto:
-    plt.axis([-2* SHAD + mtPosShad[dyIndexP3-1][dxIndexP3-1].real, 2*SHAD+ mtPosShad[dyIndexP4-1][dxIndexP4-1].real,
-            -2 * SHAD + mtPosShad[dyIndexP3-1][dxIndexP3-1].imag, 2* SHAD + mtPosShad[dyIndexP1-1][dxIndexP1-1].imag])
-    #plt.axis('equal')
+    # plt.axis([-2* SHAD + mtPosShad[dyIndexP3-1][dxIndexP3-1].real, 2*SHAD+ mtPosShad[dyIndexP4-1][dxIndexP4-1].real,
+    #         -2 * SHAD + mtPosShad[dyIndexP3-1][dxIndexP3-1].imag, 2* SHAD + mtPosShad[dyIndexP1-1][dxIndexP1-1].imag])
     
     plt.show()
 
