@@ -31,12 +31,12 @@ def main():
     #plt.scatter(np.real(centros),np.imag(centros))
      
     #Mostrando os pontos de medição em cima do grid para as 7 Erbs
-    printPontosMedicao(posEachBs,centros)
+    # printPontosMedicao(posEachBs,centros)
     #4)Criando a matriz de potencias de cada ERB
     mtPotEachBsdBm = calcMatrizPotenciasBsdbm(posEachBs)
     #5)Mostra a REMs das 7 ERBS
-    # printREMs(xx,yy,mtPotEachBsdBm,centros)
-    # calcShowMatrizPotenciasAll(mtPotEachBsdBm,xx,yy,centros)
+    printREMs(xx,yy,mtPotEachBsdBm,centros)
+    calcShowMatrizPotenciasAll(mtPotEachBsdBm,xx,yy,centros)
 #função que calcula a malha de pontos de medição em cima do grid de hexagonos
 def calcPontosMedicao(XGRID,YGRID,centros):
     passo = math.ceil(RAIO/20)

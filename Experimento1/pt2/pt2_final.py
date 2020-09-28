@@ -2,6 +2,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import math
 
+
+
 #constantes
 RAIO = 200
 SHAD = 50
@@ -151,8 +153,8 @@ def main():
 
     for j in range(20):
         mtShadowingCorr = fCorrShadowing(alphas_corr[j], mtPontosMedicao)
-        print(f"Para coef.correlação de sombreamento '{alphas_corr[j]:.2f}', o desvio-padrão das amostras" +
-                f" de sombreamentos é: '{np.std(mtShadowingCorr):.2f}'")
+        print(f"Para coef.correlação de sombreamento '{alphas_corr[j]:.1f}', o desvio-padrão das amostras" +
+                f" de sombreamentos é: '{np.std(mtShadowingCorr):.1f}'")
     
     
 main()

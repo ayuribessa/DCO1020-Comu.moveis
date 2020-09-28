@@ -1,11 +1,12 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib as mpl
 import math
 
 #constantes
 RAIO = 250
 SHAD = 50
-PASSO = 10
+PASSO = 5
 XGRID0RI = 5*RAIO
 YGRID0RI = 6*np.sqrt(3/4)*RAIO
 OFFSET = np.pi/6
@@ -62,9 +63,9 @@ def fCorrShadowing(mtPontosMedicao):
               
                 shadowingC = mtShadowingSamples[7][dyIndexP1 -1][dxIndexP1 -1 ] #pt3
                 for i in range(7):
-                    mtShadowingERB = mtShadowingSamples[i][dyIndexP1 -1][dxIndexP1 -1]
+                    ShadowingERB = mtShadowingSamples[i][dyIndexP1 -1 ][dxIndexP1 -1 ]
                     #linha -1 e col -1 em mtshadowingcorr?
-                    mtShadowingCorr[i][linha ][coluna ] = np.sqrt(ALPHA_CORR)*shadowingC + np.sqrt(1-ALPHA_CORR)*mtShadowingERB
+                    mtShadowingCorr[i][linha -1 ][coluna -1] = np.sqrt(ALPHA_CORR)*shadowingC + np.sqrt(1-ALPHA_CORR)*ShadowingERB
 
             else:
                 dxIndexP1 = math.floor(dxIndexP1) + 1
@@ -98,7 +99,7 @@ def fCorrShadowing(mtPontosMedicao):
                     dyIndexP2 = dyIndexP1
                     dxIndexP4 = dxIndexP1+1
                     dyIndexP4 = dyIndexP1+1
-                    dxIndexP3 = dxIndexP1
+                    dxIndexP3 = dxIndexP1 
                     dyIndexP3 = dyIndexP1+1
 
 
@@ -109,11 +110,13 @@ def fCorrShadowing(mtPontosMedicao):
                     #----------------------------------------END PT.2--------------------------------------------------
                 #ajuste do desvio padrão devido a regressão linear
                 stdNormalFactor = np.sqrt( (1 - 2*distY + 2*(distY**2))*(1 - 2*distX + 2*(distX**2))) #pt3
-                #amostras do sombreamento para os 4 pontos de gradedXIndexP1);
+                # amostras do sombreamento para os 4 pontos de gradedXIndexP1);
                 Sample1 = mtShadowingSamples[7][dyIndexP1 -1,dxIndexP1 -1] #pt3
                 Sample2 = mtShadowingSamples[7][dyIndexP2 -1,dxIndexP2 -1 ] #pt3
                 Sample3 = mtShadowingSamples[7][dyIndexP3 -1,dxIndexP3 -1] #pt3
                 Sample4 = mtShadowingSamples[7][dyIndexP4 -1,dxIndexP4 -1] #pt3
+
+          
                 shadowingC = ((1-distY)*(Sample1*(1-distX) + Sample2*distX) +  #pt4 #pt4
                                distY*(Sample3*(1 - distX) + Sample4*distX))/stdNormalFactor #pt4 #pt4
                 for i in range(7):
@@ -121,9 +124,11 @@ def fCorrShadowing(mtPontosMedicao):
                     Sample2 = mtShadowingSamples[i][dyIndexP2 -1,dxIndexP2 -1] #pt3
                     Sample3 = mtShadowingSamples[i][dyIndexP3 -1,dxIndexP3 -1] #pt3
                     Sample4 = mtShadowingSamples[i][dyIndexP4 -1 ,dxIndexP4-1 ] #pt3
+
+
                     shadowingERB = ((1-distY)*(Sample1*(1-distX) + Sample2*distX) +  #pt4 #pt4
                                 distY*(Sample3*(1 - distX) + Sample4*distX))/stdNormalFactor #pot4 #pt4
-                    mtShadowingCorr[i][linha ][coluna ] = np.sqrt(ALPHA_CORR)*shadowingC + np.sqrt(1-ALPHA_CORR)*mtShadowingERB
+                    mtShadowingCorr[i][linha -1 ][coluna -1 ] = np.sqrt(ALPHA_CORR)*shadowingC + np.sqrt(1-ALPHA_CORR)*ShadowingERB
 
     return mtShadowingCorr
 
@@ -137,7 +142,7 @@ def main():
     
     dimX = math.ceil(XGRID0RI + (XGRID0RI % PASSO))
     dimY = math.ceil(YGRID0RI + (YGRID0RI % PASSO))
-    mtPosX, mtPosY = np.meshgrid(np.arange(0,dimX + PASSO ,PASSO), np.arange(0,dimY + PASSO,PASSO) )
+    mtPosX, mtPosY = np.meshgrid(np.arange(0,dimX + 2*PASSO ,PASSO), np.arange(0,dimY + 2*PASSO,PASSO) )
     mtPontosMedicao = mtPosX + mtPosY*1j
     
     mtPowerFinalDbm  = np.NINF*np.ones(np.shape(mtPosY))
@@ -169,8 +174,9 @@ def main():
     MakeGrid(centros) 
     plt.show()
     
-    plt.pcolor(mtPosX,mtPosY,mtPowerFinalShadCorrDbm,cmap='hsv',vmax=20, vmin=-60)
+    plt.pcolor(mtPosX,mtPosY,mtPowerFinalShadCorrDbm,cmap='hsv',vmax=25, vmin=-65)
     plt.colorbar()
+  
     MakeGrid(centros) 
     plt.axis('equal')
     plt.show()

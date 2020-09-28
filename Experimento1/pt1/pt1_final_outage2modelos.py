@@ -123,8 +123,12 @@ def getChoice():
     while True:
         print('Deseja saber outage para Modelo de Okomura Hata (1) ou ' +
         'Cost 231 (2) ? ')
-        choice = int(input('Digite <1> ou <2> '))
-        if choice == 1 or choice == 2:
-            return choice
+        try: 
+            choice = int(input('Digite <1> ou <2> '))
+        except ValueError:
+            print('Só são válidos o valor "1" ou "2" ')
+        else: 
+            if choice == 1 or choice == 2:
+                return choice
         print('Só são válidos <1> ou <2>')
 main()
