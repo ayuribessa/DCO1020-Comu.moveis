@@ -12,7 +12,7 @@ devem estar no diretório atual do matlab em que se está trabalhando, ou, caso 
 #Resultados:
 As seguintes saídas devem ser visualizadas:
 I) Gráfico com plots :
-I.a) Da potencia recebida X distância dos arrays contidos no arquivo 'Prx_Real_2020_6.mat',  
+I.a) Da potencia recebida X distância, dos arrays contidos no arquivo 'Prx_Real_2020_6.mat'
 I.b) Do sombreamento estimado 
 I.c) Do pathloss estimado
 
