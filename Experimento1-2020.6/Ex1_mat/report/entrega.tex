@@ -1,0 +1,144 @@
+
+\documentclass[journal,onecolumn]{IEEEtran}
+
+
+\usepackage{indentfirst}
+\usepackage{hyperref}
+\usepackage[justification=centering]{caption}
+\usepackage{booktabs}
+
+\ifCLASSINFOpdf
+   \usepackage[pdftex]{graphicx}
+   \graphicspath{{a/}}
+
+\else
+
+\fi
+
+
+
+\begin{document}
+
+\title{Entrega 1: Análise de uma medição real (caracterização de canais banda estreita) }
+
+
+\author{Bessa~Ayuri}% <-this % stops a space
+
+\maketitle
+
+
+\IEEEpeerreviewmaketitle
+
+
+
+\section{Introdução}
+\IEEEPARstart{C}aracterizar um canal sem fio é crucial para estudar a viabilidade da implantação de um sistema de comunicações sem fio, uma vez que o canal vai impor limitações no desempenho do sistema. Além disso, a prototipagem e simulação de tais sistemas depende de bons modelos para caracterizar o canal em suas manifestações de larga e pequena escala.
+
+A Entrega 1 tem como propósito geral caracterizar um canal de banda estreita a partir da extração de parâmetros importantes em um conjunto de amostras de medições em potência e sua distância equivalente. Adicionalmente, observar a diferença nos valores dos parâmetros extraidos para diferentes janelas de filtragem.
+
+\subsection{Desenvolvimento}
+
+A análise foi realizada inicialmente separando o desvanecimento de larga e pequena escala. De posse dos valores do desvanecimento de larga escala, foi possível estimar a média e desvio padrão do sombreamento bem como o expoente do \textit{path loss}, que se traduz no coeficiente angular da inclinação de uma reta quando em colocado em escala logarítimica.
+
+Para o desvanecimento de pequena escala, sabe-se que os valores das variações na amplitude do sinal resultante quando sob efeito de tais manifestações, podem ser modelados matemáticamente por uma variável aleatória. Sendo assim, seguiu-se alguns procedimentos para descobrir que distribuição essa variável aleatória seguia, e quais os valores de seus parâmetros. 
+
+Algumas distribuições já são conhecidas por tipicamente modelar bem o desvanecimento de pequena escala. Dessa forma, essas distribuições foram pré-selecionadas e foi realizado um teste de aderência estatística. Para tal, primeiramente os dados da envoltória normalizada do desvanecimento de pequena escala foram ajustados às distribuições selecionadas usando a ferramenta \textit{fitdist} do matlab, e em seguida a acumulada de cada distribuição ajustada foi calculada. Essa acumulada era comparada por meio do teste de Kolmogorov-Smirnov à acumulada empírica dos dados para aderência.
+
+Tanto as abordagens para larga escala quanto para pequena escala foram repetidas para os valores de janelas de filtragem diferentes que foram especificadas na entrega. 
+
+\subsection{Resultados}
+
+\begin{figure}[h]
+	\includegraphics[width=1.0\textwidth, keepaspectratio=true]{a/results.png}
+	\centering
+	\caption{\textit{Plot} de Prx total, sombreamento e \textit{path Loss} para pontos de medição}
+	\label{fig:plots}
+\end{figure}
+
+
+\begin{table}[h]
+\begin{tabular}{@{}ccccl@{}}
+\toprule
+\textbf{Janela} & \textbf{Desvio padrão do sombreamento estimado} & \textbf{Média do sombreamento estimado} & \textbf{Expoente de perda de percurso estimado} &  \\ \midrule
+W = 2           & 3.2597                                          & 0.20343                                 & 1.8882                                          &  \\
+W = 5           & 3.1004                                          & 0.30971                                 & 1.8492                                          &  \\
+W = 10          & 3.0117                                          & 0.38127                                 & 1.8218                                          &  \\ \bottomrule
+\end{tabular}
+\caption{Expoente de perda de percurso; média e desvio padrão do sombreamento para diferentes janelas de filtragem.}
+\label{tabela1}
+
+\end{table}
+
+
+
+\begin{table}[h]
+\begin{tabular}{@{}ccccc@{}}
+\toprule
+\textbf{Janela} & \textbf{Primeira melhor pdf} & \textbf{Parâmetro(s) da primeira melhor PDF}                         & \textbf{Segunda melhor PDF} & \textbf{Parâmetro(s) da segunda melhor PDF}                           \\ \midrule
+W = 2           & Rician                       & \begin{tabular}[c]{@{}c@{}}s = 0.9807\\ sigma = 0.12481\end{tabular} & Weibull                     & \begin{tabular}[c]{@{}c@{}}A = 1.0357\\ B = 9.0311\end{tabular}       \\ \midrule
+W = 5           & Weibull                      & \begin{tabular}[c]{@{}c@{}}A = 1.038\\ B = 8.0607\end{tabular}       & Rician                      & \begin{tabular}[c]{@{}c@{}}s = 0.97046\\ sigma = 0.14918\end{tabular} \\ \midrule
+W = 10          & Weibull                      & \begin{tabular}[c]{@{}c@{}}A = 1.0391\\ B = 7.0336\end{tabular}      & Rician                      & \begin{tabular}[c]{@{}c@{}}s = 96321\\ sigma = 0.16397\end{tabular}   \\ \bottomrule
+\end{tabular}
+\caption{Primeira e segunda melhor distribuição e seus parâmetros correspondentes para diferentes janelas de filtragem.}
+\label{tabela2}
+\end{table}
+
+A figura \ref{fig:plots} apresenta um gráfico obtido após separar o \textit{path loss} e sombreamento do sinal da potência recebida completa para um valor de W = 5.
+
+Em seguida, a média e o desvio padrão do sombreamento, juntamente com o expoente da perda de percurso obtidos para cada valor de janela estão organizados na tabela \ref{tabela1}.
+
+Por último, os resultados da distribuição que melhor aderiu as amostras do arquivo disponibilizado em conjunto com seus parâmetros correspondentes, estão organizados na tabela \ref{tabela2} para cada valor de W.
+
+
+
+
+\section{Conclusão}
+
+A escolha de um tamanho de janela para métricas estatísticas acerca do sombreamento influenciou em todas as medidas, algumas de maneira mais significativa que outros.
+O resultado de aderência das amostras do desvanecimento de pequena escala a uma distribuição de probabilidades sofreu forte influencia do tamanho da janela, mudando inclusive a distribuição que mais se adequava aos dados em diferentes janelas. Pode-se dizer para a janela W = 2, onde a distribuição que melhor se adequou foi a Rician, que o canal modelado desta maneira possui algum sinal com potência dominante, provavelmente por existir algum sinal chegando em linha de visada ao recepetor dentre as múltiplas cópias do sinal provenientes do multipercursos.
+
+Por fim, pode-se observar que a influência menor do tamanho da janela foi no expoente da perda de percurso, que variou apenas em algumas unidade a partir da segunda casa decimal, ao passo que os outros parâmetros geralmente variavam a partir da primeira casa decimal.\\
+
+
+
+Link do vídeo: 
+\url{https://youtu.be/qn-96Vai_2A}
+
+
+\ifCLASSOPTIONcaptionsoff
+  \newpage
+\fi
+
+
+
+% trigger a \newpage just before the given reference
+% number - used to balance the columns on the last page
+% adjust value as needed - may need to be readjusted if
+% the document is modified later
+%\IEEEtriggeratref{8}
+% The "triggered" command can be changed if desired:
+%\IEEEtriggercmd{\enlargethispage{-5in}}
+
+% references section
+
+% can use a bibliography generated by BibTeX as a .bbl file
+% BibTeX documentation can be easily obtained at:
+% http://mirror.ctan.org/biblio/bibtex/contrib/doc/
+% The IEEEtran BibTeX style support page is at:
+% http://www.michaelshell.org/tex/ieeetran/bibtex/
+%\bibliographystyle{IEEEtran}
+% argument is your BibTeX string definitions and bibliography database(s)
+%\bibliography{IEEEabrv,../bib/paper}
+%
+% <OR> manually copy in the resultant .bbl file
+% set second argument of \begin to the number of references
+% (used to reserve space for the reference number labels box)
+\begin{thebibliography}{1}
+
+\bibitem{IEEEhowto:fitdist}
+Fit probability distribution object to data - MATLAB fitdist, \emph{https://www.mathworks.com/help/stats/fitdist.html}
+
+\end{thebibliography}
+
+
+\end{document}

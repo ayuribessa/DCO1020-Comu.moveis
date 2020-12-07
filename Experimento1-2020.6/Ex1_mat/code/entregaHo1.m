@@ -16,6 +16,7 @@ xlabel('log_{10}(d)');
 ylabel('Potência [dBm]');
 legend('Prx canal completo', 'Prx (somente perda de percurso)', 'Prx (perda de percurso + sombreamento)');
 title('Prx original vs estimada');
+% saveas(gcf,'results.png');
 
 %%%%%%%_______Fim parte 1 da Entrega______%%%%%%
 
@@ -48,9 +49,9 @@ for i=1:length(vtWs)
 %     disp(['    ------ Para janela W = ' num2str(vtWs(i)) ' ------']);
     for j = 1:length(sDistNames)
         data = [sOut(i).envNorm];
-        pd(j)  = fitdist(data,sDistNames{j});
+        pd(i,j)  = fitdist(data,sDistNames{j});
         x = linspace(min(data),max(data),length(data));
-        tCDF = [x' cdf(pd(j),x)'];
+        tCDF = [x' cdf(pd(i,j),x)'];
         [h,p,k,c] = kstest(data,'CDF',tCDF);
         resulTest(j,i).h = h;
         resulTest(j,i).p = p;
@@ -70,15 +71,15 @@ end
 %Mostra a dist com menor K e seus parâmetros estimados pelo fitdist:
 for i=1:length(vtWs)
     disp(['    ------------ Para W = ' num2str(vtWs(i)) ' ------------' ]);
-%     [menorK,indice] = min([resulTest(:,i).k]);
+%   [menorK,indice] = min([resulTest(:,i).k]);
     [out,indice] = sort([resulTest(:,i).k]);
     disp(['A melhor distribuição em função do menor K  pelo teste KS é: ' sDistNames{indice(1)} ', com k = ' num2str(out(1))]);
-    disp(['E parâmetros: ' pd(1,indice(1)).ParameterNames ' iguais a: ']);
-    disp(num2str(pd(1,indice(1)).ParameterValues));
+    disp(['E parâmetros: ' pd(i,indice(1)).ParameterNames ' iguais a: ']);
+    disp(num2str(pd(i,indice(1)).ParameterValues));
     disp(' ');
     disp(['A segunda melhor distribuição em função do K é: ' sDistNames{indice(2)} ', com k = ' num2str(out(2))]);
-    disp(['E parâmetros: ' pd(1,indice(2)).ParameterNames ' iguais a: ']);
-    disp(num2str(pd(1,indice(2)).ParameterValues));
+    disp(['E parâmetros: ' pd(i,indice(2)).ParameterNames ' iguais a: ']);
+    disp(num2str(pd(i,indice(2)).ParameterValues));
     disp(' ');
 end
 %%%%%%______ Fim Entrega 03______%%%%%%
